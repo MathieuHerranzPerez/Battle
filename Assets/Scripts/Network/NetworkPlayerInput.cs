@@ -2,6 +2,7 @@ using Fusion;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[OrderBefore(typeof(Agent))]
 public class NetworkPlayerInput : ContextBehaviour, IBeforeUpdate, IBeforeTick
 {
     [SerializeField] private CharacterInputHandler characterInputHandler;
@@ -79,6 +80,56 @@ public class NetworkPlayerInput : ContextBehaviour, IBeforeUpdate, IBeforeTick
         }
     }
 
+    // PRIVATE METHODS
+
+    /// <summary>
+    /// 1. Collect input from devices, can be executed multiple times between FixedUpdateNetwork() calls because of faster rendering speed.
+    /// </summary>
+    void IBeforeUpdate.BeforeUpdate()
+    {
+        if (!HasInputAuthority)
+            return;
+
+        // Store last render input as a base to current render input
+        baseRenderInput = renderInput;
+
+        // Reset input for current frame to default
+        renderInput = default;
+
+        // Cached input was polled and explicit reset requested
+        if (_resetCachedInput)
+        {
+            _resetCachedInput = false;
+
+            cachedDirection = default;
+            cachedDirectionSize = default;
+            cachedInput = default;
+        }
+
+        if (!Runner.ProvideInput || !Context.Input.IsLocked || InputBlocked)
+            return;
+
+        GetStandaloneInput();
+    }
+
+    /// <summary>
+    /// 2. Push cached input and reset properties, can be executed multiple times within single Unity frame if the rendering speed is slower than Fusion simulation (or there is a performance spike).
+    /// </summary>
+    private void OnInput(NetworkRunner runner, NetworkInput networkInput)
+    {
+        if (InputBlocked == true)
+            return;
+
+        GameplayInput gameplayInput = cachedInput;
+
+        // Input is polled for single fixed update, but at this time we don't know how many times in a row OnInput() will be executed.
+        // This is the reason for having a reset flag instead of resetting input immediately, otherwise we could lose input for next fixed updates (for example move direction).
+
+        _resetCachedInput = true;
+
+        networkInput.Set(gameplayInput);
+    }
+
     /// <summary>
     /// 3. Read input from Fusion. On input authority the FixedInput will match CachedInput.
     /// We have to prepare fixed input before tick so it is ready when read from other objects (agents)
@@ -89,6 +140,10 @@ public class NetworkPlayerInput : ContextBehaviour, IBeforeUpdate, IBeforeTick
         {
             fixedInput = default;
             baseFixedInput = default;
+
+            renderInput = default;
+            baseRenderInput = default;
+
             lastKnownInput = default;
             return;
         }
@@ -109,43 +164,6 @@ public class NetworkPlayerInput : ContextBehaviour, IBeforeUpdate, IBeforeTick
 
         // The current fixed input will be used as a base to first Render after FUN
         baseRenderInput = fixedInput;
-    }
-
-    // PRIVATE METHODS
-
-    /// <summary>
-    /// 2. Push cached input and reset properties, can be executed multiple times within single Unity frame if the rendering speed is slower than Fusion simulation (or there is a performance spike).
-    /// </summary>
-    private void OnInput(NetworkRunner runner, NetworkInput networkInput)
-    {
-        if (InputBlocked == true)
-            return;
-
-        GameplayInput gameplayInput = cachedInput;
-
-        // Input is polled for single fixed update, but at this time we don't know how many times in a row OnInput() will be executed.
-        // This is the reason for having a reset flag instead of resetting input immediately, otherwise we could lose input for next fixed updates (for example move direction).
-
-        _resetCachedInput = true;
-
-        networkInput.Set(gameplayInput);
-    }
-
-    void IBeforeUpdate.BeforeUpdate()
-    {
-        if (Object == null || !HasInputAuthority)
-            return;
-
-        // Store last render input as a base to current render input
-        baseRenderInput = renderInput;
-
-        // Reset input for current frame to default
-        renderInput = default;
-
-        if (InputBlocked)
-            return;
-
-        GetStandaloneInput();
     }
 
     /// <summary>
@@ -194,7 +212,7 @@ public class NetworkPlayerInput : ContextBehaviour, IBeforeUpdate, IBeforeTick
 
         GameplayInput input = new GameplayInput();
 
-        input.Direction = characterInputHandler.Direction * deltaTime;
+        input.Direction = characterInputHandler.Direction;
         input.Buttons.Set(EInputButton.Shoot1, characterInputHandler.IsShooting1);
         input.Buttons.Set(EInputButton.Shoot2, characterInputHandler.IsShooting2);
         input.Buttons.Set(EInputButton.Jump, characterInputHandler.IsJumping);
@@ -209,7 +227,7 @@ public class NetworkPlayerInput : ContextBehaviour, IBeforeUpdate, IBeforeTick
         // Following accumulation proportionally scales move direction so it reflects frames in which input was active.
         // This way the next fixed update will correspond more accurately to what happened in render frames.
 
-        cachedDirection += renderInput.Direction;
+        cachedDirection += renderInput.Direction * deltaTime;
         cachedDirectionSize += deltaTime;
 
         cachedInput.Direction = cachedDirection / cachedDirectionSize;

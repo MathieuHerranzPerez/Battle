@@ -2,6 +2,8 @@ using Fusion;
 using System;
 using UnityEngine;
 
+// https://doc.photonengine.com/fusion/current/game-samples/fusion-br/player
+
 [OrderAfter(typeof(BeforeHitboxManagerUpdater))]
 [OrderBefore(typeof(HitboxManager), typeof(AfterHitboxManagerUpdater))]
 [RequireComponent(typeof(BeforeHitboxManagerUpdater), typeof(AfterHitboxManagerUpdater))]

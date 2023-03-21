@@ -67,7 +67,7 @@ public class Weapons : ContextBehaviour
 
     public void ProcessInput(NetworkPlayerInput input)
     {
-        if (IsProxy == true)
+        if (IsProxy)
             return;
 
         if (CurrentWeapon == null)
@@ -75,7 +75,7 @@ public class Weapons : ContextBehaviour
 
         SwitchWeapon(input.FixedInput.WeaponSlot, false);
 
-        if (IsSwitchingWeapon == false)
+        if (!IsSwitchingWeapon)
         {
             _context.Input = input.FixedInput.Buttons;
             _context.PressedInput = input.GetPressedButtons();

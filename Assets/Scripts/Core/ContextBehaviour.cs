@@ -1,7 +1,6 @@
 using BaseSceneCore;
 using Fusion;
 
-
 public interface IContextBehaviour
 {
     SceneContext Context { get; set; }
