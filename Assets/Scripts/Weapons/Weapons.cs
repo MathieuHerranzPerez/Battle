@@ -41,14 +41,9 @@ public class Weapons : ContextBehaviour
     [Networked]
     private TickTimer _switchCooldown { get; set; }
 
-    [SerializeField]
-    private Weapon[] _initialWeapons;
-    [SerializeField]
-    private Transform _weaponsRoot;
-    [SerializeField]
-    private Transform _fireTransform;
-    [SerializeField]
-    private Vector3 _firstPersonWeaponOffset = new Vector3(-0.15f, 0f, 0f);
+    [SerializeField] private Weapon[] _initialWeapons;
+    [SerializeField] private Transform _weaponsRoot;
+    [SerializeField] private Transform _fireTransform;
 
     [Header("Weapon Switch")]
     [SerializeField]
@@ -81,7 +76,7 @@ public class Weapons : ContextBehaviour
             _context.PressedInput = input.GetPressedButtons();
             _context.ReleasedInput = input.GetReleasedButtons();
             _context.FirePosition = _fireTransform.position;
-            _context.FireDirection = _fireTransform.rotation * Vector3.forward;
+            _context.FireDirection = _fireTransform.rotation * Vector3.right;
 
             CurrentWeapon.ProcessInput(_context);
         }
@@ -149,14 +144,10 @@ public class Weapons : ContextBehaviour
         if (CurrentWeapon == null)
             return;
 
-        bool isFirstPerson = Context.ObservedPlayerRef == Object.InputAuthority;
-        int layer = isFirstPerson == true ? ObjectLayer.FirstPerson : ObjectLayer.ThirdPerson;
-
         _context.FirePosition = _fireTransform.position;
-        _context.FireDirection = _fireTransform.rotation * Vector3.forward;
+        _context.FireDirection = _fireTransform.rotation * Vector3.right;
 
         RefreshWeapons();
-        SetWeaponView(layer, isFirstPerson == true ? _firstPersonWeaponOffset : Vector3.zero);
 
         _projectileManager.OnRender(CurrentWeapon.BarrelTransforms);
         CurrentWeapon.OnRender(_context);
@@ -288,23 +279,6 @@ public class Weapons : ContextBehaviour
         currentWeapon.ArmWeapon();
 
         _forceWeaponsRefresh = false;
-    }
-
-    private void SetWeaponView(int layer, Vector3 offset)
-    {
-        var currentWeapon = CurrentWeapon;
-
-        if (currentWeapon == null)
-            return;
-
-        if (currentWeapon.gameObject.layer != layer)
-        {
-            // First person weapon is rendered differently (see ForwardRenderer asset)
-            currentWeapon.gameObject.SetLayer(layer, true);
-        }
-
-        // Weapon is in different position for first person vs third person to align nicely in camera view
-        currentWeapon.transform.localPosition = offset;
     }
 
     private void AddWeapon(Weapon weapon)

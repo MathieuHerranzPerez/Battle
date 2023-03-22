@@ -36,6 +36,7 @@ public interface IHitTarget
 {
     bool IsActive { get; }
     Transform BodyPivot { get; }
+    Transform HeadPivot { get; }
     Transform GroundPivot { get; }
 
     void ProcessHit(ref HitData hit);

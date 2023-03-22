@@ -95,7 +95,7 @@ public class ProjectileContext
 
 public interface IProjectileManager
 {
-    public void AddProjectile(Projectile projectilePrefab, Vector3 firePosition, Vector3 direction, byte weaponAction = 0);
+    public void AddProjectile(Projectile projectilePrefab, Vector3 firePosition, Vector3 direction, float charge = 0f, byte weaponAction = 0);
     public StandaloneProjectile AddProjectile(StandaloneProjectile projectilePrefab, Vector3 firePosition, Vector3 direction, NetworkObjectPredictionKey? predictionKey, byte weaponAction = 0);
 }
 
@@ -122,9 +122,9 @@ public class ProjectileManager : ContextBehaviour, IProjectileManager
 
     // PUBLIC MEMBERS
 
-    public void AddProjectile(Projectile projectilePrefab, Vector3 firePosition, Vector3 direction, byte weaponAction = 0)
+    public void AddProjectile(Projectile projectilePrefab, Vector3 firePosition, Vector3 direction, float charge = 0f, byte weaponAction = 0)
     {
-        var fireData = projectilePrefab.GetFireData(Runner, firePosition, direction);
+        ProjectileData fireData = projectilePrefab.GetFireData(Runner, firePosition, direction, charge);
         AddProjectile(projectilePrefab, fireData, weaponAction);
     }
 

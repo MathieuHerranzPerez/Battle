@@ -7,6 +7,7 @@ public struct WeaponDesires
     public bool Fire;
     public bool HasFired;
     public bool Reload;
+    public float ChargeValue;
 }
 
 public class Weapon : ContextBehaviour

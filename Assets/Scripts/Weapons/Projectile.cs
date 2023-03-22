@@ -24,7 +24,7 @@ public abstract class Projectile : MonoBehaviour
 
     // PUBLIC METHODS
 
-    public abstract ProjectileData GetFireData(NetworkRunner runner, Vector3 firePosition, Vector3 fireDirection);
+    public abstract ProjectileData GetFireData(NetworkRunner runner, Vector3 firePosition, Vector3 fireDirection, float charge);
     public abstract void OnFixedUpdate(ProjectileContext context, ref ProjectileData data);
 
     public void Activate(ProjectileContext context, ref ProjectileData data)

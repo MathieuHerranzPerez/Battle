@@ -5,7 +5,8 @@ public enum EInputButton
 {
     Shoot1,
     Shoot2,
-    Jump
+    Jump,
+    Reload
 }
 
 public struct GameplayInput : INetworkInput

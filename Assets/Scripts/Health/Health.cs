@@ -23,6 +23,7 @@ public class Health : ContextBehaviour, IHitTarget, IHitInstigator
 
     [SerializeField] private float _maxHealth = 100f;
     [SerializeField] private Transform _bodyPivot;
+    [SerializeField] private Transform _headPivot;
     [SerializeField] private Transform _groundPivot;
 
     [Networked]
@@ -87,6 +88,7 @@ public class Health : ContextBehaviour, IHitTarget, IHitInstigator
     bool IHitTarget.IsActive => Object != null && IsAlive;
 
     Transform IHitTarget.BodyPivot => _bodyPivot != null ? _bodyPivot : transform;
+    Transform IHitTarget.HeadPivot => _headPivot != null ? _headPivot : transform;
     Transform IHitTarget.GroundPivot => _groundPivot != null ? _groundPivot : transform;
 
     void IHitTarget.ProcessHit(ref HitData hitData)
