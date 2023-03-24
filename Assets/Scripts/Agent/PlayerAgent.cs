@@ -22,9 +22,10 @@ public class PlayerAgent : Agent
     [SerializeField] private float moveSpeed = 5f;
     [Range(0, .3f)][SerializeField] private float movementSmoothing = .05f; // How much to smooth out the movement
 
-    private Vector3 velocity = Vector3.zero;
     private bool isLocked = false;
     private Vector3 previousVelocity = Vector3.zero;
+
+    private float lastJumpTime = 0f;
 
     // Agent INTERFACE
 
@@ -161,6 +162,10 @@ public class PlayerAgent : Agent
 
     private void Jump()
     {
+        if (Time.time - lastJumpTime < Runner.DeltaTime)
+            return;
+
+        lastJumpTime = Time.time;
         rb.Rigidbody.velocity *= Vector2.right; //Reset y Velocity
         rb.Rigidbody.AddForce(Vector2.up * _jumpImpulse, ForceMode.Impulse);
     }
