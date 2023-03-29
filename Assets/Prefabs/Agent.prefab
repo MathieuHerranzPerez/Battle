@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 612932986633954893}
   - component: {fileID: 8072074460980839049}
   - component: {fileID: 6619141188810203439}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3976264863571289484}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FirePoint
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
@@ -123,7 +123,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2667012424025329171}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HeadPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +157,7 @@ GameObject:
   - component: {fileID: 3120087123894969718}
   - component: {fileID: 4468866999195713502}
   - component: {fileID: 577072431627381766}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -232,7 +232,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1006808819286403993}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Weapons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,7 +263,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8072682045477972073}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -295,7 +295,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8947672705148108355}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -329,7 +329,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7303471518100211991}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FireRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -372,7 +372,7 @@ GameObject:
   - component: {fileID: 908765074317662740}
   - component: {fileID: 7105291889159418555}
   - component: {fileID: 5912019252614901311}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Agent
   m_TagString: Untagged
   m_Icon: {fileID: 0}

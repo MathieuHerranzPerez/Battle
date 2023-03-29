@@ -4,8 +4,6 @@ public static class ObjectLayer
     public static int Default { get; private set; }
     public static int Agent { get; private set; }
     public static int Target { get; private set; }
-    public static int FirstPerson { get; private set; }
-    public static int ThirdPerson { get; private set; }
     public static int Interaction { get; private set; }
 
     static ObjectLayer()
@@ -13,8 +11,6 @@ public static class ObjectLayer
         Default = LayerMask.NameToLayer("Default");
         Agent = LayerMask.NameToLayer("Agent");
         Target = LayerMask.NameToLayer("Target");
-        FirstPerson = LayerMask.NameToLayer("FirstPerson");
-        ThirdPerson = LayerMask.NameToLayer("ThirdPerson");
         Interaction = LayerMask.NameToLayer("Interaction");
     }
 }

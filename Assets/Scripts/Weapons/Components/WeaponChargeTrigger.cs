@@ -1,4 +1,5 @@
 using Fusion;
+using System;
 using UnityEngine;
 
 public class WeaponChargeTrigger : WeaponComponent
@@ -16,12 +17,14 @@ public class WeaponChargeTrigger : WeaponComponent
 
     public override bool IsBusy => _fireCooldown.ExpiredOrNotRunning(Runner) == false;
 
+    public event Action<float> OnChargeChanged;
+
     public override void ProcessInput(WeaponContext context, ref WeaponDesires desires, bool weaponBusy)
     {
-        if (weaponBusy == true)
+        if (weaponBusy)
             return;
 
-        if (_fireCooldown.ExpiredOrNotRunning(Runner) == false)
+        if (!_fireCooldown.ExpiredOrNotRunning(Runner))
             return;
 
         NetworkButtons fireInput = context.Input;
@@ -30,14 +33,19 @@ public class WeaponChargeTrigger : WeaponComponent
         {
             chargeTime += Runner.DeltaTime;
             chargeTime = Mathf.Min(chargeTime, maxChargeTime);
+
+            OnChargeChanged?.Invoke(chargeTime / maxChargeTime);
         }
         else
         {
             if(chargeTime > 0)
             {
                 desires.Fire = true;
-                desires.ChargeValue = chargeTime / maxChargeTime;
+                float progress = chargeTime / maxChargeTime;
+                desires.ChargeValue = progress;
                 chargeTime = 0f;
+
+                OnChargeChanged?.Invoke(0);
             }
         }
     }
