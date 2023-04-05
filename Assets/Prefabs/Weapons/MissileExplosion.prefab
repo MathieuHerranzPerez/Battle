@@ -4954,7 +4954,7 @@ MonoBehaviour:
   _innerRadius: 0.5
   _outerRadius: 2.5
   _innerDamage: 120
-  _outerDamage: 10
+  _outerDamage: 20
   _despawnDelay: 3
   _effectRoot: {fileID: 0}
 --- !u!114 &5108086736340633224

@@ -120,6 +120,7 @@ public class Gameplay : ContextBehaviour
         DespawnPlayerAgent(player);
 
         var agent = SpawnAgent(player.Object.InputAuthority, player.AgentPrefab) as PlayerAgent;
+        agent.SpawnOnMap();
         player.AssignAgent(agent);
 
         agent.Health.FatalHitTaken += OnFatalHitTaken;

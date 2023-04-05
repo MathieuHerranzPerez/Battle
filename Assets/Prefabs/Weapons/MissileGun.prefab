@@ -1,5 +1,81 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &530669386921030526
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3647469803989729907}
+  - component: {fileID: 5076398273582741286}
+  - component: {fileID: 4197970457847395522}
+  m_Layer: 0
+  m_Name: Image (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &3647469803989729907
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 530669386921030526}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1173303452966486033}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -21.33, y: 0}
+  m_SizeDelta: {x: 211.5, y: 16.7}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &5076398273582741286
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 530669386921030526}
+  m_CullTransparentMesh: 1
+--- !u!114 &4197970457847395522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 530669386921030526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 9f54680dddc327645b863d9ee7e60e3b, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 0
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &2468903224538578697
 GameObject:
   m_ObjectHideFlags: 0
@@ -64,11 +140,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1173303452966486033}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 150, y: 0}
   m_SizeDelta: {x: 130.59, y: 16.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7870013700173148064
@@ -174,6 +250,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponChargeTrigger: {fileID: 6929141730891155764}
   image: {fileID: 2914991392142988128}
+  toDeactivateWhenNotCharging:
+  - {fileID: 530669386921030526}
 --- !u!1 &4780575929101622569
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,14 +281,15 @@ RectTransform:
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3647469803989729907}
   - {fileID: 1051485195303000266}
   m_Father: {fileID: 8300256746132429940}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.82, y: 0}
-  m_SizeDelta: {x: 150, y: 150}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 449.1516, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &6818924766027074828
 Canvas:
@@ -243,7 +322,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8619768193053922056}
   - component: {fileID: 5404069194356885503}
-  - component: {fileID: 3443031270125228870}
+  - component: {fileID: 3489121428418403534}
   - component: {fileID: 6929141730891155764}
   - component: {fileID: 1163632015689228752}
   - component: {fileID: 8183220529201328119}
@@ -283,9 +362,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _barrelTransform: {fileID: 7791009063050662339}
-  _description: MissileGun
+  _description: Missile Gun
   _sharedComponents: []
---- !u!114 &3443031270125228870
+--- !u!114 &3489121428418403534
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -294,17 +373,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6412021606674630818}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38cf48f33a0c4e6a92eb93b55ae76c3c, type: 3}
+  m_Script: {fileID: 11500000, guid: a2666ea0f46d44f44b476e6d7f5cb33d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _priority: 30
-  _initialAmmo: 150
-  _hasMagazine: 0
-  _maxMagazineAmmo: 30
-  _maxWeaponAmmo: 120
-  _hasUnlimitedAmmo: 1
-  _reloadTime: 2
+  maxAmmo: 3
+  spawnWithMaxAmmo: 1
+  oneBulletReloadTimeSec: 1.5
 --- !u!114 &6929141730891155764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -443,7 +519,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 7193476334475959238}
   - {fileID: 5404069194356885503}
-  - {fileID: 3443031270125228870}
+  - {fileID: 3489121428418403534}
   - {fileID: 6929141730891155764}
   - {fileID: 1163632015689228752}
   - {fileID: 8183220529201328119}

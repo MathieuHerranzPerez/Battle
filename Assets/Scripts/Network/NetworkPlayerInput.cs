@@ -231,6 +231,7 @@ public class NetworkPlayerInput : ContextBehaviour, IBeforeUpdate, IBeforeTick
         cachedDirectionSize += deltaTime;
 
         cachedInput.Direction = cachedDirection / cachedDirectionSize;
+        cachedInput.Direction.Normalize();
         cachedInput.Buttons = new NetworkButtons(cachedInput.Buttons.Bits | renderInput.Buttons.Bits);
     }
 }
