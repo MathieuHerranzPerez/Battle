@@ -124,7 +124,6 @@ public class AdvancedKinematicProjectile : KinematicProjectile
 		if (context.Interpolate == true)
 		{
 			var interpolationData = context.InterpolationData;
-
 			// Choose correct interpolation data (matters mainly for bouncing as values are changing after bounce)
 			moveData = context.FloatTick < interpolationData.To.Kinematic.StartTick ? interpolationData.From : interpolationData.To;
 		}

@@ -22,24 +22,24 @@ public class Player : ContextBehaviour
     // PUBLIC MEMBERS
 
     [Networked(OnChanged = nameof(OnActiveAgentChanged), OnChangedTargets = OnChangedTargets.All), HideInInspector]
-    public PlayerAgent ActiveAgent { get; private set; }
+    public NewPlayerAgent ActiveAgent { get; private set; }
     [Networked]
     public ref PlayerStatistics Statistics => ref MakeRef<PlayerStatistics>();
 
     public NetworkPlayerInput Input { get; private set; }
 
-    public PlayerAgent AgentPrefab => _agentPrefab;
+    public NewPlayerAgent AgentPrefab => _agentPrefab;
 
     // PRIVATE MEMBERS
 
     [SerializeField]
-    private PlayerAgent _agentPrefab;
+    private NewPlayerAgent _agentPrefab;
 
     private int _lastWeaponSlot;
 
     // PUBLIC METHODS
 
-    public void AssignAgent(PlayerAgent agent)
+    public void AssignAgent(NewPlayerAgent agent)
     {
         ActiveAgent = agent;
         ActiveAgent.Owner = this;

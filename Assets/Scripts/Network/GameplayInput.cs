@@ -14,6 +14,7 @@ public struct GameplayInput : INetworkInput
     public int WeaponSlot => WeaponButton - 1;
 
     public Vector2 Direction;
+    public Vector2 FirePoint;
     public NetworkButtons Buttons;
     public byte WeaponButton;
 }

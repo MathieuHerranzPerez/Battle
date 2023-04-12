@@ -193,7 +193,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _ActiveAgent: {fileID: 0}
-  _agentPrefab: {fileID: 5193007253566631631, guid: 9578cd96e15dcd54cbc63ad8868a7621,
+  _agentPrefab: {fileID: 6464371677473963284, guid: 853cf48a40dd51c47883612ecdfd7bca,
     type: 3}
 --- !u!114 &2232675882092141144
 MonoBehaviour:

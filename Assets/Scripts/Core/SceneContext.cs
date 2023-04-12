@@ -27,6 +27,6 @@ namespace BaseSceneCore
         [HideInInspector]
         public PlayerRef ObservedPlayerRef;
         [HideInInspector]
-        public PlayerAgent ObservedAgent;
+        public NewPlayerAgent ObservedAgent;
     }
 }

@@ -1,7 +1,8 @@
 using Fusion;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
-public class PlayerAgent : Agent
+public class NewPlayerAgent : Agent
 {
     // PUBLIC MEMBERS
 
@@ -16,59 +17,28 @@ public class PlayerAgent : Agent
 
     [SerializeField] private MeshRenderer _visual;
 
-    [SerializeField] private Vector3 _jumpImpulse = new Vector3(0f, 6f, 0f);
+    [SerializeField] private NetworkCharacterControllerPrototypeCustom ccc;
     [SerializeField] private float _maxWeaponImpulse = 30;
     [SerializeField] private float _minWeaponImpulse = 10;
 
-    [SerializeField] private NetworkRigidbody rb;
-    [SerializeField] private float moveSpeed = 5f;
-
     [SerializeField] private float slowTimeScale = 0.1f;
-    [SerializeField] private float gravityMultiplicator = 0f;
+    [SerializeField] private float moveSpeed = 5f;
 
     [Networked] private float lastPointedDirectionX { get; set; } = 1;
     [Networked] private float lastPointedDirectionY { get; set; } = 0;
+    [Networked] private NetworkBool isLocked { get; set; } = false;
 
-    private bool isLocked = false;
 
     private float lastJumpTime = 0f;
 
     [SerializeField] private float reduceForcedVelocityOverTime = 0.5f;
 
-    private float defaultMass;
-    private Vector3 defaultVelocity;
-    private Vector3 defaultAngularVelocity;
-
-    public void SpawnOnMap()
-    {
-        ResetStats();
-    }
-
-    void OnEnable()
-    {
-        health.FatalHitTaken += HandleFataleHitTaken;
-    }
-
-    void OnDisable()
-    {
-        health.FatalHitTaken += HandleFataleHitTaken;
-    }
-
-    private void HandleFataleHitTaken(HitData obj)
-    {
-        if (isLocked)
-            ChangeTimeLocalTimeScale(1 / slowTimeScale);
-    }
 
     // Agent INTERFACE
 
     protected override void OnSpawned()
     {
         name = Object.InputAuthority.ToString();
-
-        defaultMass = rb.Rigidbody.mass;
-        defaultVelocity = rb.Rigidbody.velocity;
-        defaultAngularVelocity = rb.Rigidbody.angularVelocity;
 
         if (HasInputAuthority)
         {
@@ -92,7 +62,7 @@ public class PlayerAgent : Agent
         {
             if (!isLocked)
             {
-                Move(Owner.Input.FixedInput.Direction.x * moveSpeed * Runner.DeltaTime);
+                ccc.SetDesiredPlayerVelocity(Owner.Input.FixedInput.Direction.x * moveSpeed);
 
                 if (Owner.Input.FixedInput.Buttons.IsSet(EInputButton.Shoot1) && !weapons.CurrentWeapon.IsBusy())
                 {
@@ -102,7 +72,7 @@ public class PlayerAgent : Agent
 
                 if (Owner.Input.WasPressed(EInputButton.Jump))
                 {
-                    Jump();
+                    ccc.Jump(true);
                 }
             }
             else
@@ -110,13 +80,12 @@ public class PlayerAgent : Agent
                 if (Owner.Input.WasReleased(EInputButton.Shoot1))
                 {
                     isLocked = false;
-                    ChangeTimeLocalTimeScale(1 / slowTimeScale);
+                    ChangeTimeLocalTimeScale(1f);
 
-                    AddForceImpulse(new Vector3(-lastPointedDirectionX, -lastPointedDirectionY, 0) * _maxWeaponImpulse);
+                    Vector2 forcedVelocity = new Vector2(-lastPointedDirectionX, -lastPointedDirectionY) * _maxWeaponImpulse;
+                    ccc.AddForcedVelocity(forcedVelocity);
                 }
             }
-
-            ReduceVelocity();
 
             if (Owner.Input.FixedInput.Direction != Vector2.zero)
             {
@@ -128,10 +97,7 @@ public class PlayerAgent : Agent
             }
         }
 
-        ProcessGravity();
-
-        //Weapons.ProcessInput(Owner.Input); // to reduce interpolation ?
-        //Weapons.OnLateFixedUpdate();
+        ccc.Move();
     }
 
     protected override void OnFixedUpdate()
@@ -172,61 +138,19 @@ public class PlayerAgent : Agent
         Weapons.OnRender();
     }
 
-
-    private void ProcessGravity()
+    public void SpawnOnMap()
     {
-        float dt = isLocked ? Runner.DeltaTime * slowTimeScale : Runner.DeltaTime;
-        rb.Rigidbody.velocity += Physics.gravity * gravityMultiplicator * dt;
-    }
-
-    private void Jump()
-    {
-        if (Time.time - lastJumpTime < Runner.DeltaTime)
-            return;
-
-        lastJumpTime = Time.time;
-        rb.Rigidbody.velocity *= Vector2.right; //Reset y Velocity
-        Vector3 impulse = isLocked ? _jumpImpulse * slowTimeScale : _jumpImpulse;
-        AddForceImpulse(Vector2.up * impulse);
-    }
-
-    private void AddForceImpulse(Vector3 impulse)
-    {
-        rb.Rigidbody.AddForce(impulse, ForceMode.VelocityChange);
-    }
-
-    private void Move(float move)
-    {
-        rb.Rigidbody.MovePosition(rb.Rigidbody.position + new Vector3(move, 0, 0));
-    }
-
-    private void ReduceVelocity()
-    {
-        float newVelocityX;
-        if (rb.Rigidbody.velocity.x > 0.01f)
-        {
-            newVelocityX = Mathf.Max(0, rb.Rigidbody.velocity.x - (reduceForcedVelocityOverTime * Runner.DeltaTime));
-            rb.Rigidbody.velocity = new Vector3(newVelocityX, rb.Rigidbody.velocity.y, 0);
-        }
-        else if(rb.Rigidbody.velocity.x < 0.01f)
-        {
-            newVelocityX = Mathf.Min(0, rb.Rigidbody.velocity.x + (reduceForcedVelocityOverTime * Runner.DeltaTime));
-            rb.Rigidbody.velocity = new Vector3(newVelocityX, rb.Rigidbody.velocity.y, 0);
-        }
+        ResetStats();
     }
 
     private void ChangeTimeLocalTimeScale(float timeScale)
     {
-        rb.Rigidbody.mass /= timeScale;
-        rb.Rigidbody.velocity *= timeScale;
-        rb.Rigidbody.angularVelocity *= timeScale;
+        ccc.ChangeTimeLocalTimeScale(timeScale);
     }
 
     private void ResetStats()
     {
         isLocked = false;
-        rb.Rigidbody.mass = defaultMass;
-        rb.Rigidbody.velocity = defaultVelocity;
-        rb.Rigidbody.angularVelocity = defaultAngularVelocity;
+        ccc.ChangeTimeLocalTimeScale(1f);
     }
 }

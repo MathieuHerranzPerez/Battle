@@ -106,12 +106,12 @@ public class Gameplay : ContextBehaviour
         AddSpawnRequest(player, 3f);
     }
 
-    protected virtual void OnPlayerAgentSpawned(PlayerAgent agent)
+    protected virtual void OnPlayerAgentSpawned(NewPlayerAgent agent)
     {
         agent.Health.SetImmortality(3f);
     }
 
-    protected virtual void OnPlayerAgentDespawned(PlayerAgent agent)
+    protected virtual void OnPlayerAgentDespawned(NewPlayerAgent agent)
     {
     }
 
@@ -119,7 +119,7 @@ public class Gameplay : ContextBehaviour
     {
         DespawnPlayerAgent(player);
 
-        var agent = SpawnAgent(player.Object.InputAuthority, player.AgentPrefab) as PlayerAgent;
+        NewPlayerAgent agent = SpawnAgent(player.Object.InputAuthority, player.AgentPrefab) as NewPlayerAgent;
         agent.SpawnOnMap();
         player.AssignAgent(agent);
 
