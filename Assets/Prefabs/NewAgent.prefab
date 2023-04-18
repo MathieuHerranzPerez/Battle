@@ -445,11 +445,12 @@ MonoBehaviour:
   rotationTransform: {fileID: 7303471518100211991}
   _visual: {fileID: 6619141188810203439}
   ccc: {fileID: 6869267581113096795}
-  _maxWeaponImpulse: 5
+  _maxWeaponImpulse: 6
   _minWeaponImpulse: 2
   slowTimeScale: 0.1
   moveSpeed: 5
-  reduceForcedVelocityOverTime: 0.5
+  hasAirControl: 0
+  reduceForcedVelocityOverTime: 2
 --- !u!114 &7602106468386932583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -594,7 +595,9 @@ MonoBehaviour:
     RotTeleportRadians: 1.5
   UseLegacySharedModeInterpolation: 0
   TargetInterpolationDelay: 0.03
-  gravity: -14.715
-  jumpImpulse: 6
-  reduceForcedVelocityOverTime: 5
+  gravity: -16
+  jumpImpulse: 7
+  reduceForcedVelocityOverTime: 10
+  reduceVelocityXWhileGrounded: 20
+  maximumYVelocityFromGravity: -12
   _IsGrounded: 0

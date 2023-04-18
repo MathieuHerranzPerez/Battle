@@ -1,5 +1,6 @@
 using Fusion;
 using Fusion.KCC;
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -9,9 +10,12 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
 {
     [Header("Character Controller Settings")]
     [SerializeField] private float gravity = -20.0f;
-    [SerializeField] private float jumpImpulse = 8.0f;
+    [SerializeField] private float jumpImpulseX = 5.0f;
+    [SerializeField] private float jumpImpulseY = 7.0f;
 
     [SerializeField] private float reduceForcedVelocityOverTime = 5f;
+    [SerializeField] private float reduceVelocityXWhileGrounded = 5f;
+    [SerializeField] private float maximumYVelocityFromGravity = -12f;
 
     private float playerDesiredVelocityX { get; set; } = 0;
 
@@ -82,6 +86,8 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
         // gravity
         if (IsGrounded)
         {
+            ReduceXVelocityWhileGrounded();
+
             if (currentYVel < -0.1f)
             {
                 // Reset velocity
@@ -97,7 +103,7 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
         }
         else
         {
-            currentYVel += gravity * deltaTime;
+            currentYVel = Mathf.Max(currentYVel + gravity * deltaTime, maximumYVelocityFromGravity);
             moveVelocity.y = currentYVel + forcedVelocity.y;
         }
 
@@ -111,11 +117,22 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
         ReduceForcedVelocity();
     }
 
+    private float cos45 = Mathf.Cos(45 * Mathf.PI / 180f);      // cos45 == sin45
+    private float cos135 = Mathf.Cos(135 * Mathf.PI / 180f);    // cos135 == sin135
+    public virtual void Jump(Vector2 direction)
+    {
+        direction.x = Mathf.Min(cos45, Mathf.Max(cos135, direction.x));
+        direction.y = Mathf.Sin(Mathf.Acos(direction.x));
+
+        playerDesiredVelocityX = direction.x * jumpImpulseX;
+        currentYVel = direction.y * jumpImpulseY;
+    }
+
     public virtual void Jump(bool ignoreGrounded = false, float? overrideImpulse = null)
     {
         if (IsGrounded || ignoreGrounded)
         {
-            currentYVel = overrideImpulse ?? jumpImpulse;
+            currentYVel = overrideImpulse ?? jumpImpulseY;
         }
     }
 
@@ -136,25 +153,42 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
 
     private void ReduceForcedVelocity()
     {
+        float reduceFactor = IsGrounded ? reduceVelocityXWhileGrounded : reduceForcedVelocityOverTime;
+
         Vector2 newForcedVelocity = new Vector2();
         if (forcedVelocity.x > 0f)
         {
-            newForcedVelocity.x = Mathf.Max(0, forcedVelocity.x - (reduceForcedVelocityOverTime * Runner.DeltaTime * localTimeScale));
+            newForcedVelocity.x = Mathf.Max(0, forcedVelocity.x - (reduceFactor * Runner.DeltaTime * localTimeScale));
         }
         else if (forcedVelocity.x < 0f)
         {
-            newForcedVelocity.x = Mathf.Min(0, forcedVelocity.x + (reduceForcedVelocityOverTime * Runner.DeltaTime * localTimeScale));
+            newForcedVelocity.x = Mathf.Min(0, forcedVelocity.x + (reduceFactor * Runner.DeltaTime * localTimeScale));
         }
 
         if (forcedVelocity.y > 0f)
         {
-            newForcedVelocity.y = Mathf.Max(0, forcedVelocity.y - (reduceForcedVelocityOverTime * Runner.DeltaTime * localTimeScale));
+            newForcedVelocity.y = Mathf.Max(0, forcedVelocity.y - (reduceFactor * Runner.DeltaTime * localTimeScale));
         }
         else if (forcedVelocity.y < 0f)
         {
-            newForcedVelocity.y = Mathf.Min(0, forcedVelocity.y + (reduceForcedVelocityOverTime * Runner.DeltaTime * localTimeScale));
+            newForcedVelocity.y = Mathf.Min(0, forcedVelocity.y + (reduceFactor * Runner.DeltaTime * localTimeScale));
         }
 
         forcedVelocity = newForcedVelocity;
+    }
+
+    private void ReduceXVelocityWhileGrounded()
+    {
+        float newXVelocity = 0f;
+        if (playerDesiredVelocityX > 0f)
+        {
+            newXVelocity = Mathf.Max(0, playerDesiredVelocityX - (reduceVelocityXWhileGrounded * Runner.DeltaTime * localTimeScale));
+        }
+        else if (playerDesiredVelocityX < 0f)
+        {
+            newXVelocity = Mathf.Min(0, playerDesiredVelocityX + (reduceVelocityXWhileGrounded * Runner.DeltaTime * localTimeScale));
+        }
+
+        playerDesiredVelocityX = newXVelocity;
     }
 }

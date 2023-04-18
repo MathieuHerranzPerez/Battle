@@ -1,6 +1,5 @@
 using Fusion;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 
 public class NewPlayerAgent : Agent
 {
@@ -24,15 +23,11 @@ public class NewPlayerAgent : Agent
     [SerializeField] private float slowTimeScale = 0.1f;
     [SerializeField] private float moveSpeed = 5f;
 
+    [SerializeField] private bool hasAirControl = true;
+
     [Networked] private float lastPointedDirectionX { get; set; } = 1;
     [Networked] private float lastPointedDirectionY { get; set; } = 0;
     [Networked] private NetworkBool isLocked { get; set; } = false;
-
-
-    private float lastJumpTime = 0f;
-
-    [SerializeField] private float reduceForcedVelocityOverTime = 0.5f;
-
 
     // Agent INTERFACE
 
@@ -62,7 +57,8 @@ public class NewPlayerAgent : Agent
         {
             if (!isLocked)
             {
-                ccc.SetDesiredPlayerVelocity(Owner.Input.FixedInput.Direction.x * moveSpeed);
+                if(hasAirControl)
+                    ccc.SetDesiredPlayerVelocity(Owner.Input.FixedInput.Direction.x * moveSpeed);
 
                 if (Owner.Input.FixedInput.Buttons.IsSet(EInputButton.Shoot1) && !weapons.CurrentWeapon.IsBusy())
                 {
@@ -72,7 +68,8 @@ public class NewPlayerAgent : Agent
 
                 if (Owner.Input.WasPressed(EInputButton.Jump))
                 {
-                    ccc.Jump(true);
+                    // ccc.Jump(true);
+                    ccc.Jump(Owner.Input.FixedInput.Direction);
                 }
             }
             else
@@ -82,15 +79,15 @@ public class NewPlayerAgent : Agent
                     isLocked = false;
                     ChangeTimeLocalTimeScale(1f);
 
-                    Vector2 forcedVelocity = new Vector2(-lastPointedDirectionX, -lastPointedDirectionY) * _maxWeaponImpulse;
+                    Vector2 forcedVelocity = new Vector2(lastPointedDirectionX, lastPointedDirectionY) * _maxWeaponImpulse;
+                    // TODO add a little bit of force upward
                     ccc.AddForcedVelocity(forcedVelocity);
                 }
             }
 
             if (Owner.Input.FixedInput.Direction != Vector2.zero)
             {
-                float sign = (Owner.Input.FixedInput.Direction.y < Vector2.right.y) ? -1.0f : 1.0f;
-                rotationTransform.localRotation = Quaternion.Euler(0, 0, Vector2.Angle(Vector2.right, Owner.Input.FixedInput.Direction) * sign);
+                rotationTransform.localRotation = GetRotationTransform(Owner.Input.FixedInput.Direction);
 
                 lastPointedDirectionX = Owner.Input.FixedInput.Direction.x;
                 lastPointedDirectionY = Owner.Input.FixedInput.Direction.y;
@@ -127,8 +124,7 @@ public class NewPlayerAgent : Agent
 
         if (Owner.Input.RenderInput.Direction != Vector2.zero)
         {
-            float sign = (Owner.Input.RenderInput.Direction.y < Vector2.right.y) ? -1.0f : 1.0f;
-            rotationTransform.localRotation = Quaternion.Euler(0, 0, Vector2.Angle(Vector2.right, Owner.Input.RenderInput.Direction) * sign);
+            rotationTransform.localRotation = GetRotationTransform(Owner.Input.RenderInput.Direction);
         }
     }
 
@@ -152,5 +148,11 @@ public class NewPlayerAgent : Agent
     {
         isLocked = false;
         ccc.ChangeTimeLocalTimeScale(1f);
+    }
+
+    private Quaternion GetRotationTransform(Vector2 pointedDirection)
+    {
+        float sign = (pointedDirection.y < Vector2.right.y) ? -1.0f : 1.0f;
+        return Quaternion.Euler(0, 0, Vector2.Angle(Vector2.right, pointedDirection) * sign + 180);
     }
 }
