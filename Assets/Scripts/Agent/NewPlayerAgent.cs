@@ -1,4 +1,5 @@
 using Fusion;
+using System;
 using UnityEngine;
 
 public class NewPlayerAgent : Agent
@@ -19,13 +20,14 @@ public class NewPlayerAgent : Agent
     [SerializeField] private NetworkCharacterControllerPrototypeCustom ccc;
     [SerializeField] private float _maxWeaponImpulse = 30;
     [SerializeField] private float _minWeaponImpulse = 10;
+    [SerializeField] private float additionalUpImpulse = 1;
 
     [SerializeField] private float slowTimeScale = 0.1f;
     [SerializeField] private float moveSpeed = 5f;
 
     [SerializeField] private bool hasAirControl = true;
 
-    [Networked] private float lastPointedDirectionX { get; set; } = 1;
+    [Networked] private float lastPointedDirectionX { get; set; } = -1;
     [Networked] private float lastPointedDirectionY { get; set; } = 0;
     [Networked] private NetworkBool isLocked { get; set; } = false;
 
@@ -48,6 +50,10 @@ public class NewPlayerAgent : Agent
         Owner = null;
     }
 
+    private static float angle = 90 * Mathf.PI / 180;
+    private static float cosAngle = Mathf.Cos(angle);
+    private static float sinAngle = Mathf.Sin(angle);
+
     protected override void ProcessEarlyFixedInput()
     {
         if (Owner == null)
@@ -57,7 +63,7 @@ public class NewPlayerAgent : Agent
         {
             if (!isLocked)
             {
-                if(hasAirControl)
+                if(ccc.IsGrounded || hasAirControl)
                     ccc.SetDesiredPlayerVelocity(Owner.Input.FixedInput.Direction.x * moveSpeed);
 
                 if (Owner.Input.FixedInput.Buttons.IsSet(EInputButton.Shoot1) && !weapons.CurrentWeapon.IsBusy())
@@ -79,8 +85,18 @@ public class NewPlayerAgent : Agent
                     isLocked = false;
                     ChangeTimeLocalTimeScale(1f);
 
-                    Vector2 forcedVelocity = new Vector2(lastPointedDirectionX, lastPointedDirectionY) * _maxWeaponImpulse;
-                    // TODO add a little bit of force upward
+
+                    Vector2 direction = new Vector2(lastPointedDirectionX, lastPointedDirectionY);
+                    // rotation matrix
+                    Vector2 upwardForce = new Vector2(
+                        cosAngle * direction.x - sinAngle * direction.y,
+                        sinAngle * direction.x + cosAngle * direction.y
+                    ) * (direction.x >= 0 ? 1f : -1f);
+                    Vector2 forcedVelocity = direction * _maxWeaponImpulse + upwardForce * additionalUpImpulse;
+
+                    Debug.DrawLine(transform.position, transform.position + (new Vector3(upwardForce.x, upwardForce.y, 0) * additionalUpImpulse), Color.red, 1f);
+                    Debug.DrawLine(transform.position, transform.position + (new Vector3(direction.x, direction.y, 0) * _maxWeaponImpulse), Color.red, 1f);
+
                     ccc.AddForcedVelocity(forcedVelocity);
                 }
             }

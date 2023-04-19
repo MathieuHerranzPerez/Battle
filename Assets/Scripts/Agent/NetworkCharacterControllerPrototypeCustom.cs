@@ -35,6 +35,9 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
     [Networked]
     private float currentYVel { get; set; } = 0;
 
+
+    public event Action<Vector2> OnJump;
+
     /// <summary>
     /// Sets the default teleport interpolation velocity to be the CC's current velocity.
     /// For more details on how this field is used, see <see cref="NetworkTransform.TeleportToPosition"/>.
@@ -122,10 +125,13 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
     public virtual void Jump(Vector2 direction)
     {
         direction.x = Mathf.Min(cos45, Mathf.Max(cos135, direction.x));
-        direction.y = Mathf.Sin(Mathf.Acos(direction.x));
+        //direction.y = Mathf.Sin(Mathf.Acos(direction.x));
+        direction.y = 1;
 
         playerDesiredVelocityX = direction.x * jumpImpulseX;
         currentYVel = direction.y * jumpImpulseY;
+
+        OnJump?.Invoke(direction);
     }
 
     public virtual void Jump(bool ignoreGrounded = false, float? overrideImpulse = null)
